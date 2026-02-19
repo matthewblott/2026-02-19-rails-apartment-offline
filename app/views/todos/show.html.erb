@@ -1,0 +1,12 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Todo" %>
+
+<%= render @todo %>
+
+<div>
+  <%= link_to "Edit this todo", user_todo_edit_path(Current.user, @todo) %> |
+  <%= link_to "Back to todos", user_todos_path %>
+
+  <%= button_to "Destroy this todo", user_todo_destroy_path(Current.user, @todo), method: :delete %>
+</div>
