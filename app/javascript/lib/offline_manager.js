@@ -1,19 +1,31 @@
 import { offlineDB } from 'lib/indexed_db'
 // import * as Turbo from '@hotwired/turbo'
 
+let submitCount = 0
+
 class OfflineManager {
   constructor() {
     this.syncing = false
+    this.initialized = false
+    this.submittingForms = new Set()
     this.init()
   }
 
   async init() {
+    if (this.initialized) {
+      console.log('OfflineManager already initialized')
+      return
+    }
+
     await offlineDB.init()
     this.setupEventListeners()
     this.setupFetchInterceptor()
   }
 
+
   setupEventListeners() {
+    console.log('setupEventListeners called - setting up turbo:submit-start listener')
+
     // Cache pages after they load
     document.addEventListener('turbo:load', async () => {
       const url = window.location.href
@@ -24,10 +36,44 @@ class OfflineManager {
 
     // Intercept form submissions when offline
     document.addEventListener('turbo:submit-start', async (event) => {
+
+
+      submitCount++
+      console.log('turbo:submit-start event fired', {
+        online: navigator.onLine,
+        timestamp: new Date().toISOString()
+      })
+
+      // if (!navigator.onLine) {
+      //   event.preventDefault()
+      //   await this.handleOfflineSubmit(event)
+      // }
+
       if (!navigator.onLine) {
+        const form = event.detail.formSubmission.formElement
+        const formId = form.id || form.action // Use form ID or action as key
+        
+        // Check if this form is already being submitted
+        if (this.submittingForms.has(formId)) {
+          console.log('Form already being submitted, ignoring duplicate event')
+          event.preventDefault()
+          return
+        }
+        
+        // Mark form as being submitted
+        this.submittingForms.add(formId)
         event.preventDefault()
-        await this.handleOfflineSubmit(event)
+        
+        try {
+          await this.handleOfflineSubmit(event)
+        } finally {
+          // Clean up after a short delay to allow event to fully process
+          setTimeout(() => {
+            this.submittingForms.delete(formId)
+          }, 100)
+        }
       }
+
     })
 
     // Sync when coming back online
@@ -82,6 +128,9 @@ class OfflineManager {
   }
 
   async handleOfflineSubmit(event) {
+    console.log('=== START handleOfflineSubmit ===', new Date().toISOString())
+    console.trace('Stack trace') // This will show you the call stack
+
     const form = event.detail.formSubmission.formElement
     const formData = new FormData(form)
     const method = form.method.toUpperCase()
@@ -92,15 +141,28 @@ class OfflineManager {
     for (let [key, value] of formData.entries()) {
       data[key] = value
     }
+    
+    console.log('Queueing operation:', { method, action, data })
 
     // Queue the operation
-    await offlineDB.queueOperation({
+    // await offlineDB.queueOperation({
+    //   type: 'form_submission',
+    //   method: method,
+    //   url: action,
+    //   data: data,
+    //   formHTML: form.outerHTML
+    // })
+
+    const queueId = await offlineDB.queueOperation({
       type: 'form_submission',
       method: method,
       url: action,
       data: data,
       formHTML: form.outerHTML
     })
+
+    console.log('Queued with ID:', queueId)
+    console.log('=== END handleOfflineSubmit ===')
 
     console.log('Queued offline operation:', { method, url: action, data })
 

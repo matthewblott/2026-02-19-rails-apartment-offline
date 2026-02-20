@@ -17,15 +17,12 @@ class TodosController < ApplicationController
 
   def create
     # Handle client-generated UUID
-    # @todo = if todo_params[:id].present?
-    #           @user.todos.find_or_initialize_by(id: todo_params[:id])
-    #         else
-    #           @user.todos.new
-    #         end
+    @todo = if todo_params[:id].present?
+              Todo.find_or_initialize_by(id: todo_params[:id])
+            else
+              Todo.new
+            end
     
-    @todo = Todo.find_or_initialize_by(id: todo_params[:id]) if todo_params[:id].present?
-    @todo ||= Todo.new
-
     @todo.assign_attributes(todo_params.except(:id))
 
     respond_to do |format|
