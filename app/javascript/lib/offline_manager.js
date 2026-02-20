@@ -1,7 +1,4 @@
 import { offlineDB } from 'lib/indexed_db'
-// import * as Turbo from '@hotwired/turbo'
-
-let submitCount = 0
 
 class OfflineManager {
   constructor() {
@@ -24,8 +21,6 @@ class OfflineManager {
 
 
   setupEventListeners() {
-    console.log('setupEventListeners called - setting up turbo:submit-start listener')
-
     // Cache pages after they load
     document.addEventListener('turbo:load', async () => {
       const url = window.location.href
@@ -36,18 +31,10 @@ class OfflineManager {
 
     // Intercept form submissions when offline
     document.addEventListener('turbo:submit-start', async (event) => {
-
-
-      submitCount++
       console.log('turbo:submit-start event fired', {
         online: navigator.onLine,
         timestamp: new Date().toISOString()
       })
-
-      // if (!navigator.onLine) {
-      //   event.preventDefault()
-      //   await this.handleOfflineSubmit(event)
-      // }
 
       if (!navigator.onLine) {
         const form = event.detail.formSubmission.formElement
@@ -128,9 +115,6 @@ class OfflineManager {
   }
 
   async handleOfflineSubmit(event) {
-    console.log('=== START handleOfflineSubmit ===', new Date().toISOString())
-    console.trace('Stack trace') // This will show you the call stack
-
     const form = event.detail.formSubmission.formElement
     const formData = new FormData(form)
     const method = form.method.toUpperCase()
@@ -144,15 +128,6 @@ class OfflineManager {
     
     console.log('Queueing operation:', { method, action, data })
 
-    // Queue the operation
-    // await offlineDB.queueOperation({
-    //   type: 'form_submission',
-    //   method: method,
-    //   url: action,
-    //   data: data,
-    //   formHTML: form.outerHTML
-    // })
-
     const queueId = await offlineDB.queueOperation({
       type: 'form_submission',
       method: method,
@@ -162,8 +137,6 @@ class OfflineManager {
     })
 
     console.log('Queued with ID:', queueId)
-    console.log('=== END handleOfflineSubmit ===')
-
     console.log('Queued offline operation:', { method, url: action, data })
 
     // Handle optimistic UI update

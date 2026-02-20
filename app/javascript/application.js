@@ -4,6 +4,6 @@ import "controllers"
 import { offlineManager } from "lib/offline_manager"
 
 // Initialize offline support
-// document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   offlineManager.init()
-// }, { once: true })
+}, { once: true })
