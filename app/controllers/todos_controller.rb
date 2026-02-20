@@ -2,44 +2,80 @@ class TodosController < ApplicationController
   before_action :set_todo, only: %i[ show edit update destroy ]
 
   def index
-    @todos = Todo.all
+    @todos = Todo.all.order(created_at: :desc)
+  end
+
+  def show
   end
 
   def new
     @todo = Todo.new
   end
 
+  def edit
+  end
+
   def create
+    # Handle client-generated UUID
+    # @todo = if todo_params[:id].present?
+    #           @user.todos.find_or_initialize_by(id: todo_params[:id])
+    #         else
+    #           @user.todos.new
+    #         end
+    
     @todo = Todo.find_or_initialize_by(id: todo_params[:id]) if todo_params[:id].present?
     @todo ||= Todo.new
+
     @todo.assign_attributes(todo_params.except(:id))
 
-    if @todo.save
-      redirect_to user_todo_path(Current.user, @todo), notice: "Todo was successfully created."
-    else
-      render :new, status: :unprocessable_content
+    respond_to do |format|
+      if @todo.save
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.prepend("todos", partial: "todos/todo", locals: { todo: @todo })
+        }
+        format.html { redirect_to user_todo_path(Current.user, @todo), notice: "Todo was successfully created." }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+      end
     end
+
+
+
   end
 
   def update
-    if @todo.update(todo_params)
-      redirect_to user_todo_path(Current.user, @todo), notice: "Todo was successfully updated.", status: :see_other
-    else
-      render :edit, status: :unprocessable_content
+    respond_to do |format|
+      if @todo.update(todo_params.except(:id))
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.replace(@todo, partial: "todos/todo", locals: { todo: @todo })
+        }
+        format.html { redirect_to user_todo_path(Current.user, @todo), notice: "Todo was successfully updated." }
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+      end
     end
   end
 
   def destroy
     @todo.destroy!
-    redirect_to user_todos_path(Current.user), notice: "Todo was successfully destroyed.", status: :see_other
+
+    respond_to do |format|
+      format.turbo_stream {
+        render turbo_stream: turbo_stream.remove(@todo)
+      }
+      format.html { redirect_to user_todos_path(Current.user), notice: "Todo was successfully destroyed." }
+    end
+
   end
 
   private
-    def set_todo
-      @todo = Todo.find(params.expect(:id))
-    end
 
-    def todo_params
-      params.require(:todo).permit(:id, :title, :details, :completed)
-    end
+  def set_todo
+    @todo = Todo.find(params.expect(:id))
+  end
+
+  def todo_params
+    params.require(:todo).permit(:id, :title, :details, :completed)
+  end
+
 end

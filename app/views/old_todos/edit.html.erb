@@ -1,0 +1,10 @@
+<% content_for :title, "Editing Todo" %>
+
+<%= render "form", todo: @todo %>
+
+<br>
+
+<div>
+  <%= link_to "Show this todo", user_todo_path(Current.user, @todo) %> |
+  <%= link_to "Back to todos", user_todos_path %>
+</div>

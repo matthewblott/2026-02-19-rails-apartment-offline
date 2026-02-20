@@ -1,17 +1,12 @@
 <div id="<%= dom_id todo %>">
-  <div>
-    <strong>Title:</strong>
-    <%= todo.title %>
-  </div>
-
-  <div>
-    <strong>Details:</strong>
-    <%= todo.details %>
-  </div>
-
-  <div>
+  <h3><%= todo.title %></h3>
+  <p><%= todo.details %></p>
+  <p>
     <strong>Completed:</strong>
-    <%= todo.completed %>
-  </div>
+    <%= todo.completed ? "Yes" : "No" %>
+  </p>
 
+  <%= link_to "Show", user_todo_path(Current.user, todo) %>
+  <%= link_to "Edit", user_todo_edit_path(Current.user, todo) %>
+  <%= button_to "Destroy", user_todo_destroy_path(Current.user, todo), method: :delete, data: { turbo_confirm: "Are you sure?" } %>
 </div>

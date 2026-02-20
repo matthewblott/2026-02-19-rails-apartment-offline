@@ -1,0 +1,60 @@
+/* app/assets/stylesheets/offline.css */
+
+.offline-notice {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 10000;
+  font-size: 14px;
+  font-weight: 500;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.offline-notice-info {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.offline-notice-warning {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.offline-notice-success {
+  background-color: #10b981;
+  color: white;
+}
+
+.offline-notice-error {
+  background-color: #ef4444;
+  color: white;
+}
+
+.offline-pending {
+  opacity: 0.7;
+  border-left: 3px solid #f59e0b;
+}
+
+.offline-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background-color: #f59e0b;
+  color: white;
+  font-size: 12px;
+  border-radius: 3px;
+  margin-left: 8px;
+}
