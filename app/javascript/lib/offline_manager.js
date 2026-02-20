@@ -63,6 +63,16 @@ class OfflineManager {
               'Content-Type': 'text/html; charset=utf-8'
             }
           })
+        } else {
+          // No cached version available
+          console.warn('No cached version available for:', urlString)
+          return new Response('Page not available offline', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: {
+              'Content-Type': 'text/html; charset=utf-8'
+            }
+          })
         }
       }
 
