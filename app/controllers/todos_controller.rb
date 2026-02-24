@@ -27,25 +27,23 @@ class TodosController < ApplicationController
 
     respond_to do |format|
       if @todo.save
-        format.turbo_stream {
-          render turbo_stream: turbo_stream.prepend("todos", partial: "todos/todo", locals: { todo: @todo })
-        }
+        # format.turbo_stream {
+        #   render turbo_stream: turbo_stream.prepend("todos", partial: "todos/todo", locals: { todo: @todo })
+        # }
         format.html { redirect_to user_todo_path(Current.user, @todo), notice: "Todo was successfully created." }
       else
         format.html { render :new, status: :unprocessable_entity }
       end
     end
 
-
-
   end
 
   def update
     respond_to do |format|
       if @todo.update(todo_params.except(:id))
-        format.turbo_stream {
-          render turbo_stream: turbo_stream.replace(@todo, partial: "todos/todo", locals: { todo: @todo })
-        }
+        # format.turbo_stream {
+        #   render turbo_stream: turbo_stream.replace(@todo, partial: "todos/todo", locals: { todo: @todo })
+        # }
         format.html { redirect_to user_todo_path(Current.user, @todo), notice: "Todo was successfully updated." }
       else
         format.html { render :edit, status: :unprocessable_entity }

@@ -4,9 +4,13 @@
 
 <%= render @todo %>
 
-<div>
-  <%= link_to "Edit this todo", user_todo_edit_path(Current.user, @todo) %> |
-  <%= link_to "Back to todos", user_todos_path %>
+<form action="<%= user_todo_destroy_path(Current.user, @todo) %>" method="post" id="user_todo_destroy_form">
+  <input type="hidden" name="_method" value="delete">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+</form>
 
-  <%= button_to "Destroy this todo", user_todo_destroy_path(Current.user, @todo), method: :delete %>
+<div>
+  <%= link_to "Edit", user_todo_edit_path(Current.user, @todo) %> |
+  <%= link_to "Back", user_todos_path %> |
+  <button type="submit" form="user_todo_destroy_form" class="link">Delete</button>
 </div>

@@ -5,8 +5,4 @@
     <strong>Completed:</strong>
     <%= todo.completed ? "Yes" : "No" %>
   </p>
-
-  <%= link_to "Show", user_todo_path(Current.user, todo) %>
-  <%= link_to "Edit", user_todo_edit_path(Current.user, todo) %>
-  <%= button_to "Destroy", user_todo_destroy_path(Current.user, todo), method: :delete, data: { turbo_confirm: "Are you sure?" } %>
 </div>

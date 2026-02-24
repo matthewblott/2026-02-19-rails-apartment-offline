@@ -1,39 +1,44 @@
-<%= form_with(model: todo, url: todo.persisted? ? user_todo_update_path(Current.user, todo) : user_todos_create_path(Current.user), method: todo.persisted? ? :patch : :post) do |form| %>
-  <% if todo.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(todo.errors.count, "error") %> prohibited this todo from being saved:</h2>
-      <ul>
-        <% todo.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+<% url = todo.persisted? ? user_todo_update_path(Current.user, todo) : user_todos_create_path(Current.user) %>
+<% method = todo.persisted? ? "patch" : "post" %>
+<% disabled = nil %>
+<% errors = todo.errors %>
+
+<form action="<%= url %>" method="post" accept-charset="UTF-8">
+
+  <fieldset <%= 'disabled' if disabled %>>
+
+    <input type="hidden" name="_method" value="<%= method %>">
+    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+
+    <%= render "errors", errors: errors %>
+
+    <% if todo.new_record? %>
+      <input type="hidden" name="todo[id]" data-uuid-field="true">
+    <% end %>
+
+    <div>
+      <label for="todo_title">Title</label>
+      <input type="text" name="todo[title]" id="todo_title" value="<%= todo.title %>">
     </div>
-  <% end %>
 
-  <%# Hidden field for client-generated UUID on create %>
-  <% if todo.new_record? %>
-    <%= form.hidden_field :id, value: "", data: { uuid_field: true } %>
-  <% end %>
+    <div>
+      <label for="todo_details">Details</label>
+      <textarea name="todo[details]" id="todo_details"><%= todo.details %></textarea>
+    </div>
 
-  <div>
-    <%= form.label :title, style: "display: block" %>
-    <%= form.text_field :title %>
-  </div>
+    <div>
+      <label for="todo_completed">Completed</label>
+      <input type="hidden" name="todo[completed]" value="0">
+      <input type="checkbox" name="todo[completed]" id="todo_completed" value="1" <%= "checked" if todo.completed %>>
+    </div>
 
-  <div>
-    <%= form.label :details, style: "display: block" %>
-    <%= form.text_area :details %>
-  </div>
+    <div>
+      <button class="link"><%= todo.persisted? ? "Update" : "Create" %></button>
+    </div>
+  
+  </fieldset>
 
-  <div>
-    <%= form.label :completed, style: "display: block" %>
-    <%= form.check_box :completed %>
-  </div>
-
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
+</form>
 
 <script>
   // Generate UUID for new records

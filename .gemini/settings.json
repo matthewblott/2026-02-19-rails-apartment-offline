@@ -1,0 +1,25 @@
+{
+  "ui": {
+    "showModelInfoInChat": true,
+    "footer": {
+      "hideContextPercentage": false
+    }
+  },
+  "general": {
+    "defaultApprovalMode": "default",
+    "previewFeatures": true
+  },
+  "mcpServers": {
+    "context7": {
+      "httpUrl": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}",
+        "Accept": "application/json, text/event-stream"
+      }
+    },
+    "rails-dev": {
+      "command": "rails-mcp-server",
+      "args": ["--single-project"]
+    }
+  }
+}

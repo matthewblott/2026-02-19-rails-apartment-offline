@@ -1,0 +1,8 @@
+description = "Commit changes"
+prompt = '''
+
+Make sure there are no uncommitted changes before committing.
+
+{{args}}
+
+'''

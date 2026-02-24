@@ -12,7 +12,7 @@
         <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
       </form>
 
-      <button type="submit" form="sign_out_form">Sign out</button>
+      <button type="submit" form="sign_out_form" class="link">Sign out</button>
 
     <% else %>
 
@@ -20,7 +20,7 @@
         <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
       </form>
 
-      <button type="submit" form="sign_in_form">Sign in</button>
+      <button type="submit" form="sign_in_form" class="link">Sign in</button>
     <% end %>
 
   </div>
