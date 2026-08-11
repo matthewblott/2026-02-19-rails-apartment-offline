@@ -56,8 +56,8 @@ Rails.application.configure do
   config.action_controller.raise_on_missing_callback_actions = true
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  config.hosts = [
-    /.*\.loca\.lt/,
-    /.*\.trycloudflare\.com/,
-  ]
+  # config.hosts = [
+  #   /.*\.loca\.lt/,
+  #   /.*\.trycloudflare\.com/,
+  # ]
 end
